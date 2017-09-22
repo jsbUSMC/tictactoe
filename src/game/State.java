@@ -62,15 +62,15 @@
 //    /**
 //     * This method plays a move for a player, but checks for possible victory conditions
 //     * @param player a String representing the player making the move
-//     * @param loc an integer representing the index location to place the marker. See documentation for Board#setMarker
+//     * @param loc an integer representing the index location to place the marker. See documentation for Board#move
 //     */
 //    public void playMove(String player, int loc) {
 //        if  (this.movesRemaining >= 4) {
 //            if (this.checkVictory() == 3) {
-//                this.getBoard().setMarker(player, loc);
+//                this.getBoard().move(player, loc);
 //            }
 //        } else {
-//            this.getBoard().setMarker(player, loc);
+//            this.getBoard().move(player, loc);
 //        }
 //    }
 //
