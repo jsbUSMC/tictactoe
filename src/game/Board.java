@@ -2,255 +2,278 @@ package game;
 
 import java.util.*;
 
+// TODO: flesh out all the comments. Make sure to add them to the writeup
 /**
  * The Board class contains all the logic and functionality to interact with a game of Tic Tac Toe.
  * Author: John S. Bissonette
  * NetID: jbisson2
+ *
  * @since 9/8/2017
  * Assignment: Project 1 - Tic Tac Toe
  */
 @SuppressWarnings("WeakerAccess, UnusedDeclaration")
 public class Board {
-    public enum State {Open, X, O, Draw, Victory}
-    private State[][] gameBoard;
-    private State currentTurn;
-    private int moves;
-    private boolean gameEnded;
+    public enum State {Blank, X, O}
+
+    private State[][] board;
+    private State playersTurn;
+    private State winner;
     // TODO: comment why this is a HashSet and not an ArrayList
-    private Set<Integer> availableMoves;
-    private State winningPlayer;
+    private HashSet<Integer> movesAvailable;
+
+    private int moveCount;
+    private boolean gameOver;
 
     /**
-     * Empty constructor with default Tic Tac Toe game set to 3x3. No need for a parameterized constructor
+     * Construct the Tic Tac Toe board.
      */
-    public Board() {
-        this.gameBoard = new State[3][3];
-        this.currentTurn = State.X;
-        this.gameEnded = false;
-        initializeAvailableMoves();
-        this.winningPlayer = null;
+    Board() {
+        board = new State[3][3];
+        movesAvailable = new HashSet<>();
+        reset();
     }
 
-    public boolean isGameEnded() {
-        return this.gameEnded;
-    }
 
-    public State getWinningPlayer() {
-        if (this.isGameEnded()) {
-            return this.currentTurn;
+    /**
+     * Set the cells to be blank and load the available moves (all the moves are
+     * available at the start of the game).
+     */
+    private void initialize() {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                board[row][col] = State.Blank;
+            }
         }
-        return null;
-    }
 
-    public State getCurrentTurn() {
-        return this.currentTurn;
-    }
+        movesAvailable.clear();
 
-    public Set<Integer> getAvailableMoves() {
-        return this.availableMoves;
-    }
-
-    public void initializeAvailableMoves() {
-        this.availableMoves = new HashSet<>();
         for (int i = 0; i < 9; i++) {
-            availableMoves.add(i);
+            movesAvailable.add(i);
         }
     }
 
-    public void setWinningPlayer(State player) {
-        this.winningPlayer = player;
+    /**
+     * Restart the game with a new blank board.
+     */
+    void reset() {
+        moveCount = 0;
+        gameOver = false;
+        playersTurn = State.X;
+        winner = State.Blank;
+        initialize();
     }
 
     /**
-     * Advances the player whose turn is next by checking the current value of the
-     * currentTurn instance variable. Uses the ternary operator for brevity
+     * Places an X or an O on the specified index depending on whose turn it is.
+     *
+     * @param index the position on the board (example: index 4 is location (0, 1))
+     * @return true if the move has not already been played
      */
-    public void advanceTurn() {
-        this.currentTurn = (this.currentTurn == State.X) ? State.O : State.X;
+    public boolean move(int index) {
+        return move(index % 3, index / 3);
     }
 
     /**
-     * Instance method that checks if a given location on the board has already been played yet. We don't want to let
-     * players overwrite other's marks.
-     * @param loc an integer representing a square on the 3x3 grid. This value is not normalized to the zero-indexed
-     *            array used as the game's physical board.
-     * @return boolean value true if a spot has been played, false if not.
+     * Places an X or an O on the specified location depending on who turn it is.
+     *
+     * @param x the x coordinate of the location
+     * @param y the y coordinate of the location
+     * @return true if the move has not already been played
      */
-    public boolean checkForOpenValue(int loc) {
-        if (loc > 9) {
-            throw new IllegalArgumentException("The requested location does not exist!");
+    private boolean move(int x, int y) {
+
+        if (gameOver) {
+            throw new IllegalStateException("TicTacToe is over. No moves can be played.");
         }
-        return mapLocationToIndex(loc) == State.Open;
+
+        if (board[y][x] == State.Blank) {
+            board[y][x] = playersTurn;
+        } else {
+            return false;
+        }
+
+        moveCount++;
+        movesAvailable.remove((y * 3) + x);
+
+        // The game is a draw.
+        if (moveCount == 9) {
+            winner = State.Blank;
+            gameOver = true;
+        }
+
+        // Check for a winner.
+        checkRow(y);
+        checkColumn(x);
+        checkDiagonalFromTopLeft(x, y);
+        checkDiagonalFromTopRight(x, y);
+
+        playersTurn = (playersTurn == State.X) ? State.O : State.X;
+        return true;
     }
 
     /**
-     * Instance method that records a play for a given player on the board, and calls the #checkForOpenValue method to
-     * inspect the chosen location before marking the play. If it has already been played, then an
-     * IllegalArgumentException is thrown.
-     * @param player a State object representing the current player. This can be either the AI or a human player, and
-     *               the human can choose whether or not they want to be either X or O, so we don't specify which one
-     *               discretely.
-     * @param loc an integer referencing a normalized index location on the game board. It is "normalized" in the sense
-     *            that the integer represents a 3x3 grid starting at 1, like in the project prompt. The program considers
-     *            this to be the canonical representation of the board to a player, and then decrements their chosen
-     *            location by 1, rendering the true indexed location which begins at 0.
+     * Check to see if the game is over (if there is a winner or a draw).
+     *
+     * @return true if the game is over
      */
-    public void move(State player, int loc) {
-        if (!checkForOpenValue(loc)) {
-            throw new IllegalArgumentException("This spot has already been played!");
-        }
-        setMappedIndexLocationToValue(player, loc);
-        availableMoves.remove(loc - 1);
-        this.moves++;
-        advanceTurn();
-        if (moves == 9) {
-            this.setWinningPlayer(State.Draw);
-        }
-    }
-
-    public void playNextMove(int loc) {
-        // TODO: Figure out if this is even necessary
-        checkForOpenValue(loc);
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     /**
-     * Checks to see if there is a victory condition in a given row.
-     * @param rowIndex the row's index within the gameBoard
-     * @return State object representing the victorious player, null if no victory
+     * Get a copy of the array that represents the board.
+     *
+     * @return the board array
      */
-    public State checkRowVictory(int rowIndex) {
-        for (int i = 0; i < 3; i++) {
-            if (gameBoard[rowIndex][i] != gameBoard[rowIndex][i - 1]) {
-                return null;
+    State[][] toArray() {
+        return board.clone();
+    }
+
+    /**
+     * Check to see who's turn it is.
+     *
+     * @return the player who's turn it is
+     */
+    public State getTurn() {
+        return playersTurn;
+    }
+
+    /**
+     * Check to see who won.
+     *
+     * @return the player who won (or Blank if the game is a draw)
+     */
+    public State getWinner() {
+        if (!gameOver) {
+            throw new IllegalStateException("TicTacToe is not over yet.");
+        }
+        return winner;
+    }
+
+    /**
+     * Get the indexes of all the positions on the board that are empty.
+     *
+     * @return the empty cells
+     */
+    public HashSet<Integer> getAvailableMoves() {
+        return movesAvailable;
+    }
+
+    /**
+     * Checks the specified row to see if there is a winner.
+     *
+     * @param row the row to check
+     */
+    private void checkRow(int row) {
+        for (int i = 1; i < 3; i++) {
+            if (board[row][i] != board[row][i - 1]) {
+                break;
             }
             if (i == 2) {
-                this.setWinningPlayer(this.currentTurn);
-                this.gameEnded = true;
-                return State.Victory;
+                winner = playersTurn;
+                gameOver = true;
             }
         }
-        return null;
     }
 
     /**
-     * @param columnIndex the column's index within the gameBoard
-     * @return State object representing the victorious player, null if no victory
+     * Checks the specified column to see if there is a winner.
+     *
+     * @param column the column to check
      */
-    public State checkColumnVictory(int columnIndex) {
-        for (int i = 0; i < 3; i++) {
-            if (gameBoard[i][columnIndex] != gameBoard[i - 1][columnIndex]) {
-                return null;
+    private void checkColumn(int column) {
+        for (int i = 1; i < 3; i++) {
+            if (board[i][column] != board[i - 1][column]) {
+                break;
             }
             if (i == 2) {
-                this.setWinningPlayer(this.currentTurn);
-                this.gameEnded = true;
-                return State.Victory;
+                winner = playersTurn;
+                gameOver = true;
             }
         }
-        return null;
     }
 
     /**
-     * Checks to see if the left diagonal contains a victory condition. The left diagonal is the main diagonal of the
-     * game matrix: from upper left corner to bottom right.
-     * @return The State object representing the victorious player if a left diagonal victory condition is met.
+     * Check the left diagonal to see if there is a winner.
+     *
+     * @param x the x coordinate of the most recently played move
+     * @param y the y coordinate of the most recently played move
      */
-    public State checkLeftDiagonalVictory() {
-        if (gameBoard[0][0] == State.X && gameBoard[1][1] == State.X & gameBoard[2][2] == State.X) {
-            this.winningPlayer = State.X;
-            return State.X;
-        } else if (gameBoard[0][0] == State.O && gameBoard[1][1] == State.O & gameBoard[2][2] == State.O) {
-            this.winningPlayer = State.O;
-            return State.O;
+    private void checkDiagonalFromTopLeft(int x, int y) {
+        if (x == y) {
+            for (int i = 1; i < 3; i++) {
+                if (board[i][i] != board[i - 1][i - 1]) {
+                    break;
+                }
+                if (i == 2) {
+                    winner = playersTurn;
+                    gameOver = true;
+                }
+            }
         }
-        return null;
     }
 
     /**
-     * Checks to see if the victory conditions for a right diagonal victory are met. A right diagonal victory is the
-     * diagonal starting from upper right corner to bottom left.
-     * @return The State object representing the winning player if a right diagonal victory condition is met.
+     * Check the right diagonal to see if there is a winner.
+     *
+     * @param x the x coordinate of the most recently played move
+     * @param y the y coordinate of the most recently played move
      */
-    public State checkRightDiagonalVictory() {
-        if (gameBoard[2][0] == State.X && gameBoard[1][1] == State.X & gameBoard[0][2] == State.X) {
-            this.winningPlayer = State.X;
-            return State.X;
-        } else if (gameBoard[2][0] == State.O && gameBoard[1][1] == State.O & gameBoard[0][2] == State.O) {
-            this.winningPlayer = State.O;
-            return State.O;
+    private void checkDiagonalFromTopRight(int x, int y) {
+        if (2 - x == y) {
+            for (int i = 1; i < 3; i++) {
+                if (board[2 - i][i] != board[3 - i][i - 1]) {
+                    break;
+                }
+                if (i == 2) {
+                    winner = playersTurn;
+                    gameOver = true;
+                }
+            }
         }
-        return null;
     }
 
-    // TODO: add comments
-    public State mapLocationToIndex(int loc) {
-        return gameBoard[(loc - 1) / 3][(loc - 1) % 3];
-    }
-
-    // TODO: add comments
-    public void setMappedIndexLocationToValue(State player, int loc) {
-        gameBoard[(loc - 1) / 3][(loc - 1) % 3] = player;
-    }
-
-    // Todo: Comment this method
-    public Board deepClone() {
+    /**
+     * Get a deep copy of the Tic Tac Toe board.
+     *
+     * @return an identical copy of the board
+     */
+    public Board getDeepCopy() {
         Board board = new Board();
-        
-        for (int i = 0; i < board.getGameBoard().length; i++) {
-            board.gameBoard[i] = this.gameBoard[i].clone();
+
+        for (int i = 0; i < board.board.length; i++) {
+            board.board[i] = this.board[i].clone();
         }
-        
-        board.currentTurn = this.currentTurn;
-        board.moves = this.moves;
-        board.gameEnded = this.gameEnded;
-        
+
+        board.playersTurn = this.playersTurn;
+        board.winner = this.winner;
+        board.movesAvailable = new HashSet<>();
+        board.movesAvailable.addAll(this.movesAvailable);
+        board.moveCount = this.moveCount;
+        board.gameOver = this.gameOver;
         return board;
     }
 
-    public State[][] getGameBoard() {
-        return gameBoard;
-    }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-    public void printBoard() {
-        State[][] board = this.getGameBoard();
+        for (int y = 0; y < 3; y++) {
+            for (int x = 0; x < 3; x++) {
 
-        System.out.println();
-        System.out.println("_____________");
-        System.out.println(String.format("| %s | %s | %s |", board[0], board[1], board[2]));
-        System.out.println("_____________");
-        System.out.println(String.format("| %s | %s | %s |", board[3], board[4], board[5]));
-        System.out.println("_____________");
-        System.out.println(String.format("| %s | %s | %s |", board[6], board[7], board[8]));
-        System.out.println("_____________");
-        System.out.println();
-    }
+                if (board[y][x] == State.Blank) {
+                    sb.append("-");
+                } else {
+                    sb.append(board[y][x].name());
+                }
+                sb.append(" ");
 
-    public void printInitialBoardState() {
-        System.out.println();
-        System.out.println("_____________");
-        System.out.println(String.format("| %d | %d | %d |", 1, 2, 3));
-        System.out.println("_____________");
-        System.out.println(String.format("| %d | %d | %d |", 4, 5, 6));
-        System.out.println("_____________");
-        System.out.println(String.format("| %d | %d | %d |", 7, 8, 9));
-        System.out.println("_____________");
-        System.out.println();
-    }
-
-    public static void main(String[] args) {
-        Board b = new Board();
-
-        b.availableMoves.remove(3);
-        b.availableMoves.remove(0);
-        b.availableMoves.remove(6);
-
-        b.availableMoves.forEach(System.out::println);
-
-        for (int i = 0; i < 9; i++) {
-            int row = i / 3;
-            int col = i % 3;
-            int computedIndex = row * 3 + col;
-            System.out.println(String.format("index %d: (%d, %d)", computedIndex, row, col));
+            }
+            if (y != 2) {
+                sb.append("\n");
+            }
         }
+
+        return new String(sb);
     }
 }

@@ -3,17 +3,20 @@ package algos;
 import game.Board;
 import game.Board.State;
 
+// TODO: Better comments
 /**
  * This class contains all the logic for implementing the Minimax algorithm, with a heuristic evaluation function
  * and alpha-beta pruning.
  */
 @SuppressWarnings("WeakerAccess")
 public class MinimaxAB {
-    private Double alpha = Double.NEGATIVE_INFINITY;
-    private Double beta = Double.POSITIVE_INFINITY;
     private static double searchDepth;
 
     private MinimaxAB() {}
+
+    public static void run(Board board) {
+        run(board.getTurn(), board, Double.POSITIVE_INFINITY);
+    }
 
     /**
      * Execute the algorithm.
@@ -21,31 +24,31 @@ public class MinimaxAB {
      * @param board         the Tic Tac Toe board to play on
      * @param searchDepth        the maximum depth
      */
-    static void run (State player, Board board, double searchDepth) {
+    private static void run (State player, Board board, double searchDepth) {
 
         if (searchDepth < 1) {
             throw new IllegalArgumentException("Maximum depth must be greater than 0.");
         }
 
         MinimaxAB.searchDepth = searchDepth;
-        alphaBetaPruning(player, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
+        runMinimax(player, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
     }
 
     /**
      * The meat of the algorithm.
-     * @param player        the player that the AI will identify as
-     * @param board         the Tic Tac Toe board to play on
-     * @param alpha         the alpha value
-     * @param beta          the beta value
-     * @param currentNode    the current depth
-     * @return              the score of the board
+     * @param player the player that the AI will identify as
+     * @param board the Tic Tac Toe board to play on
+     * @param alpha the alpha value
+     * @param beta the beta value
+     * @param currentNode the current depth
+     * @return the score of the board
      */
-    private static int alphaBetaPruning (State player, Board board, double alpha, double beta, int currentNode) {
-        if (currentNode++ == searchDepth || board.isGameEnded()) {
+    private static int runMinimax (State player, Board board, double alpha, double beta, int currentNode) {
+        if (currentNode++ == searchDepth || board.isGameOver()) {
             return score(player, board, currentNode);
         }
 
-        if (board.getCurrentTurn() == player) {
+        if (board.getTurn() == player) {
             return getMax(player, board, alpha, beta, currentNode);
         } else {
             return getMin(player, board, alpha, beta, currentNode);
@@ -54,25 +57,25 @@ public class MinimaxAB {
 
     /**
      * Play the move with the highest score.
-     * @param player        the player that the AI will identify as
-     * @param board         the Tic Tac Toe board to play on
-     * @param alpha         the alpha value
-     * @param beta          the beta value
-     * @param currentNode    the current depth
-     * @return              the score of the board
+     * @param player the player that the AI will identify as
+     * @param board  the Tic Tac Toe board to play on
+     * @param alpha the alpha value
+     * @param beta the beta value
+     * @param currentNode the current depth
+     * @return the score of the board
      */
     private static int getMax (State player, Board board, double alpha, double beta, int currentNode) {
-        int indexOfBestMove = -1;
+        int optimalMove = -1;
 
-        for (Integer theMove : board.getAvailableMoves()) {
+        for (Integer possibleMove : board.getAvailableMoves()) {
 
-            Board modifiedBoard = board.deepClone();
-            modifiedBoard.move(player, theMove);
-            int score = alphaBetaPruning(player, modifiedBoard, alpha, beta, currentNode);
+            Board successorState = board.getDeepCopy();
+            successorState.move(possibleMove);
+            int score = runMinimax(player, successorState, alpha, beta, currentNode);
 
             if (score > alpha) {
                 alpha = score;
-                indexOfBestMove = theMove;
+                optimalMove = possibleMove;
             }
 
             if (alpha >= beta) {
@@ -80,10 +83,10 @@ public class MinimaxAB {
             }
         }
 
-        if (indexOfBestMove != -1) {
-            board.move(player, indexOfBestMove);
+        if (optimalMove != -1) {
+            board.move(optimalMove);
         }
-        return (int)alpha;
+        return (int) alpha;
     }
 
     /**
@@ -96,18 +99,18 @@ public class MinimaxAB {
      * @return              the score of the board
      */
     private static int getMin (State player, Board board, double alpha, double beta, int currentNode) {
-        int indexOfBestMove = -1;
+        int optimalMove = -1;
 
-        for (Integer theMove : board.getAvailableMoves()) {
+        for (Integer possibleMove : board.getAvailableMoves()) {
 
-            Board modifiedBoard = board.deepClone();
-            modifiedBoard.move(player, theMove);
+            Board successorState = board.getDeepCopy();
+            successorState.move(possibleMove);
 
-            int score = alphaBetaPruning(player, modifiedBoard, alpha, beta, currentNode);
+            int score = runMinimax(player, successorState, alpha, beta, currentNode);
 
             if (score < beta) {
                 beta = score;
-                indexOfBestMove = theMove;
+                optimalMove = possibleMove;
             }
 
             if (alpha >= beta) {
@@ -115,10 +118,10 @@ public class MinimaxAB {
             }
         }
 
-        if (indexOfBestMove != -1) {
-            board.move(player, indexOfBestMove);
+        if (optimalMove != -1) {
+            board.move(optimalMove);
         }
-        return (int)beta;
+        return (int) beta;
     }
 
     /**
@@ -129,16 +132,15 @@ public class MinimaxAB {
      * @return              the score of the board
      */
     private static int score (State player, Board board, int currentNode) {
-
-        if (player == State.Open) {
+        if (player == State.Blank) {
             throw new IllegalArgumentException("Player must be X or O.");
         }
 
         State opponent = (player == State.X) ? State.O : State.X;
 
-        if (board.isGameEnded() && board.getWinningPlayer() == player) {
+        if (board.isGameOver() && board.getWinner() == player) {
             return 10 - currentNode;
-        } else if (board.isGameEnded() && board.getWinningPlayer() == opponent) {
+        } else if (board.isGameOver() && board.getWinner() == opponent) {
             return -10 + currentNode;
         } else {
             return 0;

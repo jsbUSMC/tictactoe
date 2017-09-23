@@ -1,36 +1,126 @@
 package game;
 
 import java.util.Scanner;
+import algos.MinimaxAB;
 
 /**
- * This class tracks the current state of the game
- *
  * Author: John S. Bissonette
  * NetID: jbisson2
  * @since 9/8/2017
  * Assignment: Project 1 - Tic Tac Toe
  */
-//public class Game {
-//    private static Scanner stdIn = new Scanner(System.in);
-//
-//    private Board board;
-//    private static final String PLAYER_1 = "X";
-//    private static final String PLAYER_2 = "O";
-//    private int turnCount;
-//    String user;
-//
-//    public Game() {
-//        this.board = new Board();
-//        this.turnCount = 1;
-//    }
-//
-//    public void promptPlayFirst() {
-//        System.err.print("Would you like to play first? [y]");
-//        user = stdIn.nextLine();
-//        if (user.toLowerCase().equals("y")) {
-//            user = PLAYER_1;
-//        } else {
-//            user = PLAYER_2;
-//        }
-//    }
-//}
+public class Game {
+    private Board board;
+    private Scanner stdIn = new Scanner(System.in);
+    
+    private Game() {
+        this.board = new Board();
+    }
+
+    /**
+     * Begin the game.
+     */
+    private void play () {
+
+        System.out.println("Starting a new game.");
+
+        while (true) {
+            printGameStatus();
+            playMove();
+
+            if (board.isGameOver()) {
+                printWinner();
+
+                if (!tryAgain()) {
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Handle the move to be played, either by the player or the AI.
+     */
+    private void playMove () {
+        if (board.getTurn() == Board.State.X) {
+            getPlayerMove();
+        } else {
+            MinimaxAB.run(board);
+        }
+    }
+
+    /**
+     * Print out the board and the player who's turn it is.
+     */
+    private void printGameStatus () {
+        System.out.println("\n" + board + "\n");
+        System.out.println(board.getTurn().name() + "'s turn.");
+    }
+
+    /**
+     * For reading in and interpreting the move that the user types into the console.
+     */
+    private void getPlayerMove () {
+        System.out.print("Index of move: ");
+
+        int move = stdIn.nextInt();
+
+        if (move <= 0 || move > 9) {
+            System.out.println("\nInvalid move.");
+            System.out.println("\nThe index of the move must be between 1 and 9, inclusive.");
+        }
+        board.move(move);
+    }
+
+    /**
+     * Print out the winner of the game.
+     */
+    private void printWinner () {
+        Board.State winner = board.getWinner();
+
+        System.out.println("\n" + board + "\n");
+
+        if (winner == Board.State.Blank) {
+            System.out.println("The TicTacToe is a Draw.");
+        } else {
+            System.out.println("Player " + winner.toString() + " wins!");
+        }
+    }
+
+    /**
+     * Reset the game if the player wants to play again.
+     * @return      true if the player wants to play again
+     */
+    private boolean tryAgain () {
+        if (promptTryAgain()) {
+            board.reset();
+            System.out.println("Started new game.");
+            System.out.println("X's turn.");
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Ask the player if they want to play again.
+     * @return      true if the player wants to play again
+     */
+    private boolean promptTryAgain () {
+        while (true) {
+            System.out.print("Would you like to start a new game? (Y/N): ");
+            String response = stdIn.next();
+            if (response.equalsIgnoreCase("y")) {
+                return true;
+            } else if (response.equalsIgnoreCase("n")) {
+                return false;
+            }
+            System.out.println("Invalid input.");
+        }
+    }
+
+    public static void main(String[] args) {
+        Game ticTacToe = new Game();
+        ticTacToe.play();
+    }
+}
