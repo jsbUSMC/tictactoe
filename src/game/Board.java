@@ -24,15 +24,15 @@ public class Board {
     private int moveCount;
     private boolean gameOver;
 
+    //region Constructor and Setup Methods
     /**
      * Construct the Tic Tac Toe board.
      */
     Board() {
-        board = new State[3][3];
-        movesAvailable = new HashSet<>();
+        setBoard(new State[3][3]);
+        setMovesAvailable(new HashSet<>());
         reset();
     }
-
 
     /**
      * Set the cells to be blank and load the available moves (all the moves are
@@ -41,14 +41,14 @@ public class Board {
     private void initialize() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                board[row][col] = State.Blank;
+                getBoard()[row][col] = State.Blank;
             }
         }
 
-        movesAvailable.clear();
+        getMovesAvailable().clear();
 
         for (int i = 0; i < 9; i++) {
-            movesAvailable.add(i);
+            getMovesAvailable().add(i);
         }
     }
 
@@ -56,12 +56,13 @@ public class Board {
      * Restart the game with a new blank board.
      */
     void reset() {
-        moveCount = 0;
-        gameOver = false;
-        playersTurn = State.X;
-        winner = State.Blank;
+        setMoveCount(0);
+        setGameOver(false);
+        setPlayersTurn(State.X);
+        setWinner(State.Blank);
         initialize();
     }
+    //endregion
 
     /**
      * Places an X or an O on the specified index depending on whose turn it is.
@@ -82,23 +83,23 @@ public class Board {
      */
     private boolean move(int x, int y) {
 
-        if (gameOver) {
+        if (isGameOver()) {
             throw new IllegalStateException("TicTacToe is over. No moves can be played.");
         }
 
-        if (board[y][x] == State.Blank) {
-            board[y][x] = playersTurn;
+        if (getBoard()[y][x] == State.Blank) {
+            getBoard()[y][x] = getPlayersTurn();
         } else {
             return false;
         }
 
-        moveCount++;
-        movesAvailable.remove((y * 3) + x);
+        setMoveCount(getMoveCount() + 1);
+        getMovesAvailable().remove((y * 3) + x);
 
         // The game is a draw.
-        if (moveCount == 9) {
-            winner = State.Blank;
-            gameOver = true;
+        if (getMoveCount() == 9) {
+            setWinner(State.Blank);
+            setGameOver(true);
         }
 
         // Check for a winner.
@@ -107,58 +108,11 @@ public class Board {
         checkDiagonalFromTopLeft(x, y);
         checkDiagonalFromTopRight(x, y);
 
-        playersTurn = (playersTurn == State.X) ? State.O : State.X;
+        setPlayersTurn((getPlayersTurn() == State.X) ? State.O : State.X);
         return true;
     }
 
-    /**
-     * Check to see if the game is over (if there is a winner or a draw).
-     *
-     * @return true if the game is over
-     */
-    public boolean isGameOver() {
-        return gameOver;
-    }
-
-    /**
-     * Get a copy of the array that represents the board.
-     *
-     * @return the board array
-     */
-    State[][] toArray() {
-        return board.clone();
-    }
-
-    /**
-     * Check to see who's turn it is.
-     *
-     * @return the player who's turn it is
-     */
-    public State getTurn() {
-        return playersTurn;
-    }
-
-    /**
-     * Check to see who won.
-     *
-     * @return the player who won (or Blank if the game is a draw)
-     */
-    public State getWinner() {
-        if (!gameOver) {
-            throw new IllegalStateException("TicTacToe is not over yet.");
-        }
-        return winner;
-    }
-
-    /**
-     * Get the indexes of all the positions on the board that are empty.
-     *
-     * @return the empty cells
-     */
-    public HashSet<Integer> getAvailableMoves() {
-        return movesAvailable;
-    }
-
+    //region Check Victory Conditions
     /**
      * Checks the specified row to see if there is a winner.
      *
@@ -166,12 +120,12 @@ public class Board {
      */
     private void checkRow(int row) {
         for (int i = 1; i < 3; i++) {
-            if (board[row][i] != board[row][i - 1]) {
+            if (getBoard()[row][i] != getBoard()[row][i - 1]) {
                 break;
             }
             if (i == 2) {
-                winner = playersTurn;
-                gameOver = true;
+                setWinner(getPlayersTurn());
+                setGameOver(true);
             }
         }
     }
@@ -183,12 +137,12 @@ public class Board {
      */
     private void checkColumn(int column) {
         for (int i = 1; i < 3; i++) {
-            if (board[i][column] != board[i - 1][column]) {
+            if (getBoard()[i][column] != getBoard()[i - 1][column]) {
                 break;
             }
             if (i == 2) {
-                winner = playersTurn;
-                gameOver = true;
+                setWinner(getPlayersTurn());
+                setGameOver(true);
             }
         }
     }
@@ -202,12 +156,12 @@ public class Board {
     private void checkDiagonalFromTopLeft(int x, int y) {
         if (x == y) {
             for (int i = 1; i < 3; i++) {
-                if (board[i][i] != board[i - 1][i - 1]) {
+                if (getBoard()[i][i] != getBoard()[i - 1][i - 1]) {
                     break;
                 }
                 if (i == 2) {
-                    winner = playersTurn;
-                    gameOver = true;
+                    setWinner(getPlayersTurn());
+                    setGameOver(true);
                 }
             }
         }
@@ -222,17 +176,19 @@ public class Board {
     private void checkDiagonalFromTopRight(int x, int y) {
         if (2 - x == y) {
             for (int i = 1; i < 3; i++) {
-                if (board[2 - i][i] != board[3 - i][i - 1]) {
+                if (getBoard()[2 - i][i] != getBoard()[3 - i][i - 1]) {
                     break;
                 }
                 if (i == 2) {
-                    winner = playersTurn;
-                    gameOver = true;
+                    setWinner(getPlayersTurn());
+                    setGameOver(true);
                 }
             }
         }
     }
+    //endregion
 
+    //region Utility Methods
     /**
      * Get a deep copy of the Tic Tac Toe board.
      *
@@ -241,17 +197,26 @@ public class Board {
     public Board getDeepCopy() {
         Board board = new Board();
 
-        for (int i = 0; i < board.board.length; i++) {
-            board.board[i] = this.board[i].clone();
+        for (int i = 0; i < board.getBoard().length; i++) {
+            board.getBoard()[i] = this.getBoard()[i].clone();
         }
 
-        board.playersTurn = this.playersTurn;
-        board.winner = this.winner;
-        board.movesAvailable = new HashSet<>();
-        board.movesAvailable.addAll(this.movesAvailable);
-        board.moveCount = this.moveCount;
-        board.gameOver = this.gameOver;
+        board.setPlayersTurn(this.getPlayersTurn());
+        board.setWinner(this.getWinner());
+        board.setMovesAvailable(new HashSet<>());
+        board.getMovesAvailable().addAll(this.getMovesAvailable());
+        board.setMoveCount(this.getMoveCount());
+        board.setGameOver(this.isGameOver());
         return board;
+    }
+
+    /**
+     * Get a copy of the array that represents the board.
+     *
+     * @return the board array
+     */
+    State[][] toArray() {
+        return getBoard().clone();
     }
 
     @Override
@@ -261,10 +226,10 @@ public class Board {
         for (int y = 0; y < 3; y++) {
             for (int x = 0; x < 3; x++) {
 
-                if (board[y][x] == State.Blank) {
+                if (getBoard()[y][x] == State.Blank) {
                     sb.append("-");
                 } else {
-                    sb.append(board[y][x].name());
+                    sb.append(getBoard()[y][x].name());
                 }
                 sb.append(" ");
 
@@ -276,4 +241,86 @@ public class Board {
 
         return new String(sb);
     }
+    //endregion
+
+    //region Mutators and Accessors
+    public State[][] getBoard() {
+        return board;
+    }
+
+    public void setBoard(State[][] board) {
+        this.board = board;
+    }
+
+    public State getPlayersTurn() {
+        return playersTurn;
+    }
+
+    /**
+     * Check to see who's turn it is.
+     *
+     * @return the player who's turn it is
+     */
+    public State getTurn() {
+        return getPlayersTurn();
+    }
+
+    public void setPlayersTurn(State playersTurn) {
+        this.playersTurn = playersTurn;
+    }
+
+    /**
+     * Check to see who won.
+     *
+     * @return the player who won (or Blank if the game is a draw)
+     */
+    public State getWinner() {
+//        if (!isGameOver()) {
+//            throw new IllegalStateException("TicTacToe is not over yet.");
+//        }
+        return winner;
+    }
+
+    public void setWinner(State winner) {
+        this.winner = winner;
+    }
+
+    /**
+     * Get the indexes of all the positions on the board that are empty.
+     *
+     * @return the empty cells
+     */
+    public HashSet<Integer> getAvailableMoves() {
+        return getMovesAvailable();
+    }
+
+    public HashSet<Integer> getMovesAvailable() {
+        return movesAvailable;
+    }
+
+    public void setMovesAvailable(HashSet<Integer> movesAvailable) {
+        this.movesAvailable = movesAvailable;
+    }
+
+    public int getMoveCount() {
+        return moveCount;
+    }
+
+    public void setMoveCount(int moveCount) {
+        this.moveCount = moveCount;
+    }
+
+    /**
+     * Check to see if the game is over (if there is a winner or a draw).
+     *
+     * @return true if the game is over
+     */
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+    //endregion
 }
