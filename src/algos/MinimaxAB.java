@@ -1,7 +1,7 @@
 package algos;
 
 import game.Board;
-import game.Board.State;
+import game.State;
 
 // TODO: Better comments
 /**

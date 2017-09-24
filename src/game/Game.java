@@ -42,7 +42,7 @@ public class Game {
      * Handle the move to be played, either by the player or the AI.
      */
     private void playMove () {
-        if (board.getTurn() == Board.State.X) {
+        if (board.getTurn() == State.X) {
             getPlayerMove();
         } else {
             MinimaxAB.run(board);
@@ -65,22 +65,22 @@ public class Game {
 
         int move = stdIn.nextInt();
 
-        if (move <= 0 || move > 9) {
+        if (move < 1 || move > 9) {
             System.out.println("\nInvalid move.");
             System.out.println("\nThe index of the move must be between 1 and 9, inclusive.");
         }
-        board.move(move);
+        board.move(move - 1);
     }
 
     /**
      * Print out the winner of the game.
      */
     private void printWinner () {
-        Board.State winner = board.getWinner();
+        State winner = board.getWinner();
 
         System.out.println("\n" + board + "\n");
 
-        if (winner == Board.State.Blank) {
+        if (winner == State.Blank) {
             System.out.println("The TicTacToe is a Draw.");
         } else {
             System.out.println("Player " + winner.toString() + " wins!");
