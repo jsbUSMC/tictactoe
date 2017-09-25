@@ -11,6 +11,7 @@ import game.State;
 @SuppressWarnings("WeakerAccess")
 public class MinimaxAB {
     private static double searchDepth;
+    public static int nodesPruned;
 
     private MinimaxAB() {}
 
@@ -68,7 +69,6 @@ public class MinimaxAB {
         int optimalMove = -1;
 
         for (Integer possibleMove : board.getAvailableMoves()) {
-
             Board successorState = board.getDeepCopy();
             successorState.move(possibleMove);
             int score = runMinimax(player, successorState, alpha, beta, currentNode);
@@ -79,6 +79,7 @@ public class MinimaxAB {
             }
 
             if (alpha >= beta) {
+                nodesPruned++;
                 break;
             }
         }
@@ -114,6 +115,7 @@ public class MinimaxAB {
             }
 
             if (alpha >= beta) {
+                nodesPruned++;
                 break;
             }
         }

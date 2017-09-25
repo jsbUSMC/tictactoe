@@ -12,9 +12,15 @@ import algos.MinimaxAB;
 public class Game {
     private Board board;
     private Scanner stdIn = new Scanner(System.in);
+    private NineBoard nineBoard;
     
     private Game() {
         this.board = new Board();
+        this.nineBoard = new NineBoard();
+    }
+
+    private void playNineBoard() {
+        // play a new game of 9-Board tic tac toe
     }
 
     /**
@@ -22,7 +28,7 @@ public class Game {
      */
     private void play () {
 
-        System.out.println("Starting a new game.");
+        System.err.println("Welcome to a game of classic Tic Tac Toe! ");
 
         while (true) {
             printGameStatus();
@@ -36,6 +42,11 @@ public class Game {
                 }
             }
         }
+    }
+
+    private void promptPlayerMarker() {
+        System.err.print("Would you like to play as 'X' or 'O'?: ");
+        String marker = stdIn.nextLine().toLowerCase();
     }
 
     /**
@@ -53,21 +64,21 @@ public class Game {
      * Print out the board and the player who's turn it is.
      */
     private void printGameStatus () {
-        System.out.println("\n" + board + "\n");
-        System.out.println(board.getTurn().name() + "'s turn.");
+        System.err.println("\n" + board + "\n");
+        System.err.println(board.getTurn().name() + "'s turn.");
     }
 
     /**
      * For reading in and interpreting the move that the user types into the console.
      */
     private void getPlayerMove () {
-        System.out.print("Index of move: ");
+        System.err.print("Index of move: ");
 
         int move = stdIn.nextInt();
 
         if (move < 1 || move > 9) {
-            System.out.println("\nInvalid move.");
-            System.out.println("\nThe index of the move must be between 1 and 9, inclusive.");
+            System.err.println("\nInvalid move.");
+            System.err.println("\nThe index of the move must be between 1 and 9, inclusive.");
         }
         board.move(move - 1);
     }
@@ -78,13 +89,15 @@ public class Game {
     private void printWinner () {
         State winner = board.getWinner();
 
-        System.out.println("\n" + board + "\n");
+        System.err.println("\n" + board + "\n");
 
         if (winner == State.Blank) {
-            System.out.println("The TicTacToe is a Draw.");
+            System.err.println("The TicTacToe is a Draw.");
         } else {
-            System.out.println("Player " + winner.toString() + " wins!");
+            System.err.println("Player " + winner.toString() + " wins!");
         }
+
+        System.err.println(String.format("\nTotal Nodes Pruned: %d", MinimaxAB.nodesPruned));
     }
 
     /**
@@ -94,8 +107,8 @@ public class Game {
     private boolean tryAgain () {
         if (promptTryAgain()) {
             board.reset();
-            System.out.println("Started new game.");
-            System.out.println("X's turn.");
+            System.err.println("Started new game.");
+            System.err.println("X's turn.");
             return true;
         }
 
@@ -108,14 +121,14 @@ public class Game {
      */
     private boolean promptTryAgain () {
         while (true) {
-            System.out.print("Would you like to start a new game? (Y/N): ");
+            System.err.print("Would you like to start a new game? (Y/N): ");
             String response = stdIn.next();
             if (response.equalsIgnoreCase("y")) {
                 return true;
             } else if (response.equalsIgnoreCase("n")) {
                 return false;
             }
-            System.out.println("Invalid input.");
+            System.err.println("Invalid input.");
         }
     }
 
