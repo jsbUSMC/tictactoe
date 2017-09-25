@@ -21,6 +21,8 @@ public class NineBoard {
 
     public NineBoard() {
         this.setGameGrid(new Board[3][3]);
+        this.setMovesAvailable(new HashSet<>());
+        reset();
     }
 
     private void initialize() {
@@ -198,15 +200,31 @@ public class NineBoard {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 3; x++) {
-                sb.append(this.getGameGrid()[y][x].toString());
-            }
-
-            if (y != 2) {
-                sb.append("\n");
-            }
-        }
+        // First row of games
+        // First board row
+        sb.append(this.gameGrid[0][0].getBoard()[0][0].name());
+        sb.append(" ");
+        sb.append(this.gameGrid[0][0].getBoard()[0][1].name());
+        sb.append(" ");
+        sb.append(this.gameGrid[0][0].getBoard()[0][2].name());
+        sb.append(" ");
+        // Dividers
+        sb.append("  ||  ");
+        // Second board row
+        sb.append(this.gameGrid[0][1].getBoard()[0][0].name());
+        sb.append(" ");
+        sb.append(this.gameGrid[0][1].getBoard()[0][1].name());
+        sb.append(" ");
+        sb.append(this.gameGrid[0][1].getBoard()[0][2].name());
+        sb.append(" ");
+        // Dividers
+        sb.append("  ||  ");
+        // Third board row
+        sb.append(this.gameGrid[0][2].getBoard()[0][0].name());
+        sb.append(" ");
+        sb.append(this.gameGrid[0][2].getBoard()[0][1].name());
+        sb.append(" ");
+        sb.append(this.gameGrid[0][2].getBoard()[0][2].name());
 
         return new String(sb);
     }
@@ -260,4 +278,9 @@ public class NineBoard {
         this.gameOver = gameOver;
     }
     //endregion
+
+    public static void main(String[] args) {
+        NineBoard game = new NineBoard();
+        System.out.print(game);
+    }
 }

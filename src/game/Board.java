@@ -210,31 +210,22 @@ public class Board {
         return board;
     }
 
-    /**
-     * Get a copy of the array that represents the board.
-     *
-     * @return the board array
-     */
-    State[][] toArray() {
-        return getBoard().clone();
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        for (int y = 0; y < 3; y++) {
-            for (int x = 0; x < 3; x++) {
+        for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 3; y++) {
 
-                if (getBoard()[y][x] == State.Blank) {
+                if (getBoard()[x][y] == State.Blank) {
                     sb.append("-");
                 } else {
-                    sb.append(getBoard()[y][x].name());
+                    sb.append(getBoard()[x][y].name());
                 }
                 sb.append(" ");
 
             }
-            if (y != 2) {
+            if (x != 2) {
                 sb.append("\n");
             }
         }

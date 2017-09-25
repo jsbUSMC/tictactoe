@@ -12,15 +12,9 @@ import algos.MinimaxAB;
 public class Game {
     private Board board;
     private Scanner stdIn = new Scanner(System.in);
-    private NineBoard nineBoard;
     
     private Game() {
         this.board = new Board();
-        this.nineBoard = new NineBoard();
-    }
-
-    private void playNineBoard() {
-        // play a new game of 9-Board tic tac toe
     }
 
     /**
@@ -72,7 +66,7 @@ public class Game {
      * For reading in and interpreting the move that the user types into the console.
      */
     private void getPlayerMove () {
-        System.err.print("It's your turn. Select the index of board to play: ");
+        System.err.print("It's your turn. Select the location you wish to play: ");
 
         int move = stdIn.nextInt();
 
@@ -99,7 +93,7 @@ public class Game {
             System.err.println("Player " + winner.toString() + " wins!");
         }
 
-        System.err.println(String.format("\nTotal Nodes Pruned: %d", MinimaxAB.nodesPruned));
+        System.err.println(String.format("\nTotal Nodes Pruned: %d\nTotal States Evaluated: %d", MinimaxAB.nodesPruned, MinimaxAB.statesEvaluated));
     }
 
     /**

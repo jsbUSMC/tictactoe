@@ -13,6 +13,9 @@ import game.State;
 public class MinimaxAB {
     private static double searchDepth;
     public static int nodesPruned;
+    public static int bestPossibleMove =  -1000;
+    public static int worstPossibleMove = 1000;
+    public static int statesEvaluated;
 
     private MinimaxAB() {
     }
@@ -35,6 +38,8 @@ public class MinimaxAB {
         }
 
         MinimaxAB.searchDepth = searchDepth;
+//        int skynetsMove = runMinimax(skynet, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
+//        System.err.println(String.format("The AI played move: %d", skynetsMove));
         runMinimax(skynet, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
     }
 
@@ -50,9 +55,10 @@ public class MinimaxAB {
      */
     private static int runMinimax(State skynet, Board board, double alpha, double beta, int currentNode) {
         if (currentNode++ == searchDepth || board.isGameOver()) {
-            int skynetsMove = evalHeuristic(skynet, board, currentNode);
-            System.out.println(String.format("The AI played move: %d", skynetsMove));
-            return skynetsMove;
+//            int skynetsMove = evalHeuristic(skynet, board, currentNode);
+//            System.out.println(String.format("The AI played move: %d", skynetsMove));
+//            return skynetsMove;
+            return evalHeuristic(skynet, board, currentNode);
         }
 
         if (board.getTurn() == skynet) {
@@ -73,9 +79,11 @@ public class MinimaxAB {
      * @return the evaluated heuristic (score) of the board
      */
     private static int getMax(State skynet, Board board, double alpha, double beta, int currentNode) {
-        int optimalMove = -1;
+        int optimalMove = -1000;
 
         for (Integer possibleMove : board.getAvailableMoves()) {
+            // TODO: Rename getDeepCopy() to generateSuccessor()
+            statesEvaluated++;
             Board successorState = board.getDeepCopy();
             successorState.move(possibleMove);
             int score = runMinimax(skynet, successorState, alpha, beta, currentNode);
@@ -91,7 +99,9 @@ public class MinimaxAB {
             }
         }
 
-        if (optimalMove != -1) {
+        if (optimalMove != -1000) {
+            // last printout of getMax will be the final decision for move by AI
+//            System.out.println(String.format("\ngetMax optimal move: %d\nnodes pruned thus far: %d", optimalMove + 1, nodesPruned));
             board.move(optimalMove);
         }
         return (int) alpha;
@@ -108,10 +118,10 @@ public class MinimaxAB {
      * @return the evaluated heuristic (score) of the board
      */
     private static int getMin(State skynet, Board board, double alpha, double beta, int currentNode) {
-        int optimalMove = -1;
+        int optimalMove = -1000;
 
         for (Integer possibleMove : board.getAvailableMoves()) {
-
+            statesEvaluated++;
             Board successorState = board.getDeepCopy();
             successorState.move(possibleMove);
 
@@ -128,7 +138,8 @@ public class MinimaxAB {
             }
         }
 
-        if (optimalMove != -1) {
+        if (optimalMove != -1000) {
+//            System.err.println(String.format("\ngetMin optimal move: %d\nnodes pruned thus far: %d", optimalMove, nodesPruned));
             board.move(optimalMove);
         }
         return (int) beta;
@@ -151,9 +162,13 @@ public class MinimaxAB {
 
         if (board.isGameOver() && board.getWinner() == skynet) {
 //            System.err.println(String.format("\nScore at terminal node: %d", (10 - currentNode)));
+            bestPossibleMove = ((10 - currentNode) > bestPossibleMove) ? (bestPossibleMove = (10 - currentNode)) : bestPossibleMove;
+//            System.err.println(String.format("bestPossibleMove: %d", bestPossibleMove));
             return 10 - currentNode;
         } else if (board.isGameOver() && board.getWinner() == opponent) {
 //            System.err.println(String.format("\nScore at terminal node: %d", (-10 + currentNode)));
+            worstPossibleMove = ((-10 + currentNode) < worstPossibleMove) ? (worstPossibleMove = (-10 + currentNode)) : worstPossibleMove;
+//            System.err.println(String.format("worstPossibleMove: %d", worstPossibleMove));
             return -10 + currentNode;
         } else {
             return 0;

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane alignment="center" hgap="10" style="-fx-background-color: linear-gradient(to bottom right,#050325,#2b1c33,#002b52);" vgap="10" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+    <rowConstraints>
+        <RowConstraints minHeight="100.0" prefHeight="250.0" />
+        <RowConstraints minHeight="100.0" prefHeight="250.0" />
+        <RowConstraints minHeight="100.0" prefHeight="250.0" />
+    </rowConstraints>
+    <columnConstraints>
+        <ColumnConstraints minWidth="100.0" prefWidth="250.0" />
+        <ColumnConstraints minWidth="100.0" prefWidth="250.0" />
+        <ColumnConstraints minWidth="100.0" prefWidth="250.0" />
+    </columnConstraints>
+</GridPane>
