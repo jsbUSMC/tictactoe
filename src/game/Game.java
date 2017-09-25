@@ -65,20 +65,22 @@ public class Game {
      */
     private void printGameStatus () {
         System.err.println("\n" + board + "\n");
-        System.err.println(board.getTurn().name() + "'s turn.");
+//        System.err.println(board.getTurn().name() + "'s turn.");
     }
 
     /**
      * For reading in and interpreting the move that the user types into the console.
      */
     private void getPlayerMove () {
-        System.err.print("Index of move: ");
+        System.err.print("It's your turn. Select the index of board to play: ");
 
         int move = stdIn.nextInt();
 
-        if (move < 1 || move > 9) {
-            System.err.println("\nInvalid move.");
-            System.err.println("\nThe index of the move must be between 1 and 9, inclusive.");
+        while (move < 1 || move > 9) {
+            System.err.println("\nInvalid move. The index of the move must be between 1 and 9, inclusive.\n");
+            System.err.print("Select the index of board to play: ");
+
+            move = stdIn.nextInt();
         }
         board.move(move - 1);
     }

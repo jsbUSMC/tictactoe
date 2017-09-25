@@ -11,7 +11,7 @@ import java.util.*;
  * @since 9/8/2017
  * Assignment: Project 1 - Tic Tac Toe
  */
-@SuppressWarnings("WeakerAccess, UnusedDeclaration, Duplicates")
+@SuppressWarnings("WeakerAccess, Duplicates")
 public class Board {
     //public enum State {Blank, X, O}
 
@@ -19,7 +19,7 @@ public class Board {
     private State playersTurn;
     private State winner;
     // TODO: comment why this is a HashSet and not an ArrayList
-    private HashSet<Integer> movesAvailable;
+    private HashSet<Integer> availableMoves;
 
     private int moveCount;
     private boolean gameOver;
@@ -30,7 +30,7 @@ public class Board {
      */
     Board() {
         setBoard(new State[3][3]);
-        setMovesAvailable(new HashSet<>());
+        setAvailableMoves(new HashSet<>());
         reset();
     }
 
@@ -45,10 +45,10 @@ public class Board {
             }
         }
 
-        getMovesAvailable().clear();
+        getAvailableMoves().clear();
 
         for (int i = 0; i < 9; i++) {
-            getMovesAvailable().add(i);
+            getAvailableMoves().add(i);
         }
     }
 
@@ -94,7 +94,7 @@ public class Board {
         }
 
         setMoveCount(getMoveCount() + 1);
-        getMovesAvailable().remove((y * 3) + x);
+        getAvailableMoves().remove((y * 3) + x);
 
         // The game is a draw.
         if (getMoveCount() == 9) {
@@ -203,8 +203,8 @@ public class Board {
 
         board.setPlayersTurn(this.getPlayersTurn());
         board.setWinner(this.getWinner());
-        board.setMovesAvailable(new HashSet<>());
-        board.getMovesAvailable().addAll(this.getMovesAvailable());
+        board.setAvailableMoves(new HashSet<>());
+        board.getAvailableMoves().addAll(this.getAvailableMoves());
         board.setMoveCount(this.getMoveCount());
         board.setGameOver(this.isGameOver());
         return board;
@@ -291,15 +291,11 @@ public class Board {
      * @return the empty cells
      */
     public HashSet<Integer> getAvailableMoves() {
-        return getMovesAvailable();
+        return availableMoves;
     }
 
-    public HashSet<Integer> getMovesAvailable() {
-        return movesAvailable;
-    }
-
-    public void setMovesAvailable(HashSet<Integer> movesAvailable) {
-        this.movesAvailable = movesAvailable;
+    public void setAvailableMoves(HashSet<Integer> movesAvailable) {
+        this.availableMoves = movesAvailable;
     }
 
     public int getMoveCount() {

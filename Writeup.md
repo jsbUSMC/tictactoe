@@ -18,7 +18,15 @@ This project asked us to create an AI opponent playing the game of Tic Tac Toe. 
 the assignment into two parts: the first part is to implement the AI for a classic game of Tic Tac Toe,
 and the second part is to implement the AI playing a game of Ultimate Tic Tac Toe, also known as 9-Board
 Tic Tac Toe. I decided to code the program in Java. The algorithm we were directed to use for the AI is
-the [Minimax algorithm][1], using a heuristic evaluation function and alpha-beta pruning.
+the [Minimax algorithm][1], using a heuristic evaluation function and alpha-beta pruning. While it was noted
+in the project rubric that this is overkill for a simple game of Tic Tac Toe, it was absolutely necessary to use
+this algorithm when playing 9-Board Tic Tac Toe. 
+
+The project contains the following directory structure:
+
+- **`TicTacToe/`** - the project root folder
+    - **`out/`** - the compiled Java bytecode from source
+    - **`src/`** - source code
 
 ## Things to Note:
 
