@@ -113,6 +113,10 @@ public class NineBoard {
         return movesAvailable;
     }
 
+    public void move(int board, int index) {
+        // select the board at board index and the loc on board with index
+    }
+
     /**
      * Checks the specified row to see if there is a winner.
      *
@@ -278,6 +282,13 @@ public class NineBoard {
         this.gameOver = gameOver;
     }
     //endregion
+
+//    public void betterPrint() {
+//        for (int i = 0; i < 3; i++) {
+//            System.out.print(gameGrid[i][0].getBoard()[0]);
+//            System.out.print("  ");
+//        }
+//    }
 
     public static void main(String[] args) {
         NineBoard game = new NineBoard();

@@ -310,4 +310,26 @@ public class Board {
         this.gameOver = gameOver;
     }
     //endregion
+
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>(9);
+        Set<Integer> hs = new HashSet<>(9);
+        for (int i = 0; i < 9; i++) {
+            list.add(i);
+            hs.add(i);
+        }
+
+        list.remove(3);
+        hs.remove(3);
+
+        for (int i = 0; i < list.size(); i++) {
+            System.out.print(String.format("%d, ", i));
+        }
+
+        System.out.println();
+
+        for (Integer i : hs) {
+            System.out.print(String.format("%d, ", i));
+        }
+    }
 }

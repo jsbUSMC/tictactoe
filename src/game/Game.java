@@ -1,28 +1,35 @@
 package game;
 
 import java.util.Scanner;
+
 import algos.MinimaxAB;
 
 /**
  * Author: John S. Bissonette
  * NetID: jbisson2
+ *
  * @since 9/8/2017
  * Assignment: Project 1 - Tic Tac Toe
  */
 public class Game {
     private Board board;
     private Scanner stdIn = new Scanner(System.in);
-    
+
     private Game() {
         this.board = new Board();
+    }
+
+    public static void main(String[] args) {
+        Game ticTacToe = new Game();
+        ticTacToe.play();
     }
 
     /**
      * Begin the game.
      */
-    private void play () {
+    private void play() {
 
-        System.err.println("Welcome to a game of classic Tic Tac Toe! ");
+        System.err.println("Welcome to a game of Classic TicTacToe!");
 
         while (true) {
             printGameStatus();
@@ -46,7 +53,7 @@ public class Game {
     /**
      * Handle the move to be played, either by the player or the AI.
      */
-    private void playMove () {
+    private void playMove() {
         if (board.getTurn() == State.X) {
             getPlayerMove();
         } else {
@@ -57,7 +64,7 @@ public class Game {
     /**
      * Print out the board and the player who's turn it is.
      */
-    private void printGameStatus () {
+    private void printGameStatus() {
         System.err.println("\n" + board + "\n");
 //        System.err.println(board.getTurn().name() + "'s turn.");
     }
@@ -65,7 +72,7 @@ public class Game {
     /**
      * For reading in and interpreting the move that the user types into the console.
      */
-    private void getPlayerMove () {
+    private void getPlayerMove() {
         System.err.print("It's your turn. Select the location you wish to play: ");
 
         int move = stdIn.nextInt();
@@ -82,7 +89,7 @@ public class Game {
     /**
      * Print out the winner of the game.
      */
-    private void printWinner () {
+    private void printWinner() {
         State winner = board.getWinner();
 
         System.err.println("\n" + board + "\n");
@@ -98,9 +105,10 @@ public class Game {
 
     /**
      * Reset the game if the player wants to play again.
-     * @return      true if the player wants to play again
+     *
+     * @return true if the player wants to play again
      */
-    private boolean tryAgain () {
+    private boolean tryAgain() {
         if (promptTryAgain()) {
             board.reset();
             System.err.println("Started new game.");
@@ -113,9 +121,10 @@ public class Game {
 
     /**
      * Ask the player if they want to play again.
-     * @return      true if the player wants to play again
+     *
+     * @return true if the player wants to play again
      */
-    private boolean promptTryAgain () {
+    private boolean promptTryAgain() {
         while (true) {
             System.err.print("Would you like to start a new game? (Y/N): ");
             String response = stdIn.next();
@@ -126,10 +135,5 @@ public class Game {
             }
             System.err.println("Invalid input.");
         }
-    }
-
-    public static void main(String[] args) {
-        Game ticTacToe = new Game();
-        ticTacToe.play();
     }
 }
