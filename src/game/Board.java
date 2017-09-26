@@ -78,20 +78,20 @@ public class Board {
      * @param y the y coordinate of the location
      * @return true if the move has not already been played
      */
-    private boolean move(int x, int y) {
+    private boolean move(int y, int x) {
 
         if (isGameOver()) {
             throw new IllegalStateException("TicTacToe is over. No moves can be played.");
         }
 
-        if (getBoard()[y][x] == State.Open) {
-            getBoard()[y][x] = getPlayersTurn();
+        if (getBoard()[x][y] == State.Open) {
+            getBoard()[x][y] = getPlayersTurn();
         } else {
             return false;
         }
 
         setMoveCount(getMoveCount() + 1);
-        getAvailableMoves().remove((y * 3) + x);
+        getAvailableMoves().remove((x * 3) + y);
 
         // The game is a draw.
         if (getMoveCount() == 9) {
@@ -100,8 +100,8 @@ public class Board {
         }
 
         // Check for a winner.
-        checkRow(y);
-        checkColumn(x);
+        checkRow(x);
+        checkColumn(y);
         checkLeftDiagonal(x, y);
         checkRightDiagonal(x, y);
 
@@ -242,6 +242,10 @@ public class Board {
         this.board = board;
     }
 
+
+    /**
+     * @return the player whose current turn it is to play
+     */
     public State getPlayersTurn() {
         return playersTurn;
     }
@@ -252,15 +256,6 @@ public class Board {
 
     public void setAiPlayer(State aiPlayer) {
         this.aiPlayer = aiPlayer;
-    }
-
-    /**
-     * Check to see who's turn it is.
-     *
-     * @return the player who's turn it is
-     */
-    public State getTurn() {
-        return getPlayersTurn();
     }
 
     public void setPlayersTurn(State playersTurn) {

@@ -283,15 +283,219 @@ public class NineBoard {
     }
     //endregion
 
-//    public void betterPrint() {
-//        for (int i = 0; i < 3; i++) {
-//            System.out.print(gameGrid[i][0].getBoard()[0]);
-//            System.out.print("  ");
-//        }
-//    }
+    /**
+     * @return String to print the board. Uses many, many, many calls to sb.append() as it uses a StringBuilder to
+     * create the properly formatted output of the 9-Board TicTacToe game
+     */
+    public String betterPrint() {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < 3; i++) {
+            //region first row
+            // first game
+            if ((gameGrid[i][0].getBoard()[0][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[0][0].name());
+            }
+
+            if (gameGrid[i][0].getBoard()[0][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[0][1].name());
+            }
+
+            if (gameGrid[i][0].getBoard()[0][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[0][2].name());
+            }
+
+            sb.append("  ||  ");
+
+            // second game
+            if ((gameGrid[i][1].getBoard()[0][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[0][0].name());
+            }
+
+            if (gameGrid[i][1].getBoard()[0][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[0][1].name());
+            }
+
+            if (gameGrid[i][1].getBoard()[0][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[0][2].name());
+            }
+
+            sb.append("  ||  ");
+
+            // third game
+            if ((gameGrid[i][2].getBoard()[0][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[0][0].name());
+            }
+
+            if (gameGrid[i][2].getBoard()[0][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[0][1].name());
+            }
+
+            if (gameGrid[i][2].getBoard()[0][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[0][2].name());
+            }
+
+            sb.append("\n");
+            //endregion
+
+            //region second row
+            // first game
+            if ((gameGrid[i][0].getBoard()[1][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[1][0].name());
+            }
+
+            if (gameGrid[i][0].getBoard()[1][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[1][1].name());
+            }
+
+            if (gameGrid[i][0].getBoard()[1][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[1][2].name());
+            }
+
+            sb.append("  ||  ");
+
+            // second game
+            if ((gameGrid[i][1].getBoard()[1][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[1][0].name());
+            }
+
+            if (gameGrid[i][1].getBoard()[1][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[1][1].name());
+            }
+
+            if (gameGrid[i][1].getBoard()[1][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[1][2].name());
+            }
+
+            sb.append("  ||  ");
+
+            // third game
+            if ((gameGrid[i][2].getBoard()[1][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[1][0].name());
+            }
+
+            if (gameGrid[i][2].getBoard()[1][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[1][1].name());
+            }
+
+            if (gameGrid[i][2].getBoard()[1][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[1][2].name());
+            }
+
+            sb.append("\n");
+            //endregion
+
+            //region third row
+            // first game
+            if ((gameGrid[i][0].getBoard()[2][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[2][0].name());
+            }
+
+            if (gameGrid[i][0].getBoard()[2][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[2][1].name());
+            }
+
+            if (gameGrid[i][0].getBoard()[2][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][0].getBoard()[2][2].name());
+            }
+
+            sb.append("  ||  ");
+
+            // second game
+            if ((gameGrid[i][1].getBoard()[2][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[2][0].name());
+            }
+
+            if (gameGrid[i][1].getBoard()[2][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[2][1].name());
+            }
+
+            if (gameGrid[i][1].getBoard()[2][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][1].getBoard()[2][2].name());
+            }
+
+            sb.append("  ||  ");
+
+            // third game
+            if ((gameGrid[i][2].getBoard()[2][0].name().equalsIgnoreCase("open"))) {
+                sb.append(" - ");
+            } else {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[2][0].name());
+            }
+
+            if (gameGrid[i][2].getBoard()[2][1].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[2][1].name());
+            }
+
+            if (gameGrid[i][2].getBoard()[2][2].name().equalsIgnoreCase("open")) {
+                sb.append(" - ");
+            } else  {
+                sb.append(" ").append(gameGrid[i][2].getBoard()[2][2].name());
+            }
+
+            sb.append("\n");
+            //endregion
+
+            if (i != 2) {
+                sb.append("\n====================================== \n\n");
+            }
+        }
+        return new String(sb);
+    }
 
     public static void main(String[] args) {
         NineBoard game = new NineBoard();
-        System.out.print(game);
+//        System.out.print(game);
+        System.out.print(game.betterPrint());
     }
 }
