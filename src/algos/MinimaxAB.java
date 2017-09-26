@@ -19,7 +19,7 @@ public class MinimaxAB {
      */
     public static void computeMinimax(Board board, double searchDepth) {
         MinimaxAB.searchDepth = searchDepth;
-        minimax(board.getTurn(), board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
+        minimax(board.getPlayersTurn(), board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
     }
 
     private static int minimax(State skynet, Board board, double alpha, double beta, int currentNode) {
@@ -35,7 +35,7 @@ public class MinimaxAB {
             }
         }
 
-        if (board.getTurn() == skynet) {
+        if (board.getPlayersTurn() == skynet) {
             int optimalMove = -1000;
             for (Integer possibleMove : board.getAvailableMoves()) {
                 statesEvaluated++;

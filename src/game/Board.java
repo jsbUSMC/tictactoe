@@ -13,14 +13,11 @@ import java.util.*;
  */
 @SuppressWarnings("WeakerAccess, Duplicates")
 public class Board {
-    //public enum State {Open, X, O}
-
     private State[][] board;
     private State playersTurn;
     private State winner;
-    // TODO: comment why this is a HashSet and not an ArrayList
     private HashSet<Integer> availableMoves;
-
+    private State aiPlayer;
     private int moveCount;
     private boolean gameOver;
 
@@ -247,6 +244,14 @@ public class Board {
 
     public State getPlayersTurn() {
         return playersTurn;
+    }
+
+    public State getAiPlayer() {
+        return aiPlayer;
+    }
+
+    public void setAiPlayer(State aiPlayer) {
+        this.aiPlayer = aiPlayer;
     }
 
     /**

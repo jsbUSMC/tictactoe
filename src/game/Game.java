@@ -69,7 +69,7 @@ public class Game {
      * Handle the move to be played, either by the player or the AI.
      */
     private void playMove() {
-        if (board.getTurn() == player) {
+        if (board.getPlayersTurn() == player) {
             getPlayerMove();
         } else {
             MinimaxAB.computeMinimax(board, 18);
