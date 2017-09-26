@@ -57,7 +57,7 @@ public class Game {
         if (board.getTurn() == State.X) {
             getPlayerMove();
         } else {
-            MinimaxAB.run(board);
+            MinimaxAB.computeMinimax(board, Double.POSITIVE_INFINITY);
         }
     }
 

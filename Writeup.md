@@ -27,6 +27,18 @@ The project contains the following directory structure:
 - **`TicTacToe/`** - the project root folder
     - **`out/`** - the compiled Java bytecode from source
     - **`src/`** - source code
+    
+## Classic TicTacToe
+
+For my classic TicTacToe application, I created several classes: Board, Game, State, and MinimaxAB. The Board class 
+contains all the logic for manipulating a game board, and for performing a deep clone of the board for use in the 
+MinimaxAB class.
+
+### Minimax Implementation
+
+My implementation of the Minimax algorithm includes the ability to set a search depth for the tree, a heuristic 
+evaluation function for determining the utility of a particular terminal state, and includes an alpha-beta cutoff for
+ both the `getMax()` and `getMin()` functions.
 
 ## Things to Note:
 
