@@ -46,7 +46,7 @@ public class NineBoard {
         setMoveCount(0);
         setGameOver(false);
         setPlayersTurn(State.X);
-        setWinner(State.Blank);
+        setWinner(State.Open);
         initialize();
     }
 
@@ -59,7 +59,7 @@ public class NineBoard {
             throw new IllegalStateException("TicTacToe is over. No moves can be played.");
         }
 
-        if (board[y][x] == State.Blank) {
+        if (board[y][x] == State.Open) {
             board[y][x] = playersTurn;
         } else {
             return false;
@@ -70,7 +70,7 @@ public class NineBoard {
 
         // The game is a draw.
         if (moveCount == 9) {
-            winner = State.Blank;
+            winner = State.Open;
             gameOver = true;
         }
 

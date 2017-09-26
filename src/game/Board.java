@@ -13,7 +13,7 @@ import java.util.*;
  */
 @SuppressWarnings("WeakerAccess, Duplicates")
 public class Board {
-    //public enum State {Blank, X, O}
+    //public enum State {Open, X, O}
 
     private State[][] board;
     private State playersTurn;
@@ -41,7 +41,7 @@ public class Board {
     private void initialize() {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                getBoard()[row][col] = State.Blank;
+                getBoard()[row][col] = State.Open;
             }
         }
 
@@ -59,7 +59,7 @@ public class Board {
         setMoveCount(0);
         setGameOver(false);
         setPlayersTurn(State.X);
-        setWinner(State.Blank);
+        setWinner(State.Open);
         initialize();
     }
     //endregion
@@ -87,7 +87,7 @@ public class Board {
             throw new IllegalStateException("TicTacToe is over. No moves can be played.");
         }
 
-        if (getBoard()[y][x] == State.Blank) {
+        if (getBoard()[y][x] == State.Open) {
             getBoard()[y][x] = getPlayersTurn();
         } else {
             return false;
@@ -98,15 +98,15 @@ public class Board {
 
         // The game is a draw.
         if (getMoveCount() == 9) {
-            setWinner(State.Blank);
+            setWinner(State.Open);
             setGameOver(true);
         }
 
         // Check for a winner.
         checkRow(y);
         checkColumn(x);
-        checkDiagonalFromTopLeft(x, y);
-        checkDiagonalFromTopRight(x, y);
+        checkLeftDiagonal(x, y);
+        checkRightDiagonal(x, y);
 
         setPlayersTurn((getPlayersTurn() == State.X) ? State.O : State.X);
         return true;
@@ -114,7 +114,7 @@ public class Board {
 
     //region Check Victory Conditions
     /**
-     * Checks the specified row to see if there is a winner.
+     * Iterates over the rows and checks that values match each other to determine if there is a victor.
      *
      * @param row the row to check
      */
@@ -131,7 +131,7 @@ public class Board {
     }
 
     /**
-     * Checks the specified column to see if there is a winner.
+     * Iterates over the columns and checks that values match each other to determine if there is a victor.
      *
      * @param column the column to check
      */
@@ -148,12 +148,12 @@ public class Board {
     }
 
     /**
-     * Check the left diagonal to see if there is a winner.
+     * Check the left diagonal to see if there is a winner. The left diagonal begins at top-left and ends bottom-right
      *
-     * @param x the x coordinate of the most recently played move
-     * @param y the y coordinate of the most recently played move
+     * @param x the x coordinate of the move that was played
+     * @param y the y coordinate of the move that was played
      */
-    private void checkDiagonalFromTopLeft(int x, int y) {
+    private void checkLeftDiagonal(int x, int y) {
         if (x == y) {
             for (int i = 1; i < 3; i++) {
                 if (getBoard()[i][i] != getBoard()[i - 1][i - 1]) {
@@ -168,12 +168,13 @@ public class Board {
     }
 
     /**
-     * Check the right diagonal to see if there is a winner.
+     * Check the right diagonal to see if there is a winner. The right diagonal is the diagonal that starts at the
+     * upper right and ends at the bottom left.
      *
-     * @param x the x coordinate of the most recently played move
-     * @param y the y coordinate of the most recently played move
+     * @param x the x coordinate of the move that was played
+     * @param y the y coordinate of the move that was played
      */
-    private void checkDiagonalFromTopRight(int x, int y) {
+    private void checkRightDiagonal(int x, int y) {
         if (2 - x == y) {
             for (int i = 1; i < 3; i++) {
                 if (getBoard()[2 - i][i] != getBoard()[3 - i][i - 1]) {
@@ -201,6 +202,7 @@ public class Board {
             board.getBoard()[i] = this.getBoard()[i].clone();
         }
 
+        // Set all current game conditions on the generated successor state
         board.setPlayersTurn(this.getPlayersTurn());
         board.setWinner(this.getWinner());
         board.setAvailableMoves(new HashSet<>());
@@ -217,7 +219,7 @@ public class Board {
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
 
-                if (getBoard()[x][y] == State.Blank) {
+                if (getBoard()[x][y] == State.Open) {
                     sb.append("-");
                 } else {
                     sb.append(getBoard()[x][y].name());
@@ -263,7 +265,7 @@ public class Board {
     /**
      * Check to see who won.
      *
-     * @return the player who won (or Blank if the game is a draw)
+     * @return the player who won (or Open if the game is a draw)
      */
     public State getWinner() {
 //        if (!isGameOver()) {

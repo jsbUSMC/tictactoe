@@ -14,6 +14,7 @@ import algos.MinimaxAB;
 public class Game {
     private Board board;
     private Scanner stdIn = new Scanner(System.in);
+    private State player;
 
     private Game() {
         this.board = new Board();
@@ -30,6 +31,9 @@ public class Game {
     private void play() {
 
         System.err.println("Welcome to a game of Classic TicTacToe!");
+        System.err.println();
+
+        promptPlayerMarker();
 
         while (true) {
             printGameStatus();
@@ -41,23 +45,34 @@ public class Game {
                 if (!tryAgain()) {
                     break;
                 }
+
+                promptPlayerMarker();
             }
         }
     }
 
+    /**
+     * Assigns the player's chosen marker to either an X or O
+     */
     private void promptPlayerMarker() {
-        System.err.print("Would you like to play as 'X' or 'O'?: ");
+        System.err.print("Would you like to play as 'X' or 'O'? (X goes first): ");
         String marker = stdIn.nextLine().toLowerCase();
+
+        while (!marker.toUpperCase().equals("X") && !marker.toUpperCase().equals("O")) {
+            System.err.print("Please select either 'X' or 'O' (case insensitive): ");
+        }
+
+        player = (marker.toUpperCase().equals("X")) ? State.X : State.O;
     }
 
     /**
      * Handle the move to be played, either by the player or the AI.
      */
     private void playMove() {
-        if (board.getTurn() == State.X) {
+        if (board.getTurn() == player) {
             getPlayerMove();
         } else {
-            MinimaxAB.computeMinimax(board, Double.POSITIVE_INFINITY);
+            MinimaxAB.computeMinimax(board, 18);
         }
     }
 
@@ -94,7 +109,7 @@ public class Game {
 
         System.err.println("\n" + board + "\n");
 
-        if (winner == State.Blank) {
+        if (winner == State.Open) {
             System.err.println("The TicTacToe is a Draw.");
         } else {
             System.err.println("Player " + winner.toString() + " wins!");

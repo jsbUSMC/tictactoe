@@ -1,7 +1,7 @@
 package game;
 
 public enum State {
-    Blank,
+    Open,
     X,
     O
 }
