@@ -9,7 +9,7 @@ import game.State;
  * This class contains all the logic for implementing the Minimax algorithm, with a heuristic evaluation function
  * and alpha-beta pruning.
  */
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings("WeakerAccess, Duplicates")
 public class MinimaxAB {
     private static double searchDepth;
     public static int nodesPruned;
@@ -23,6 +23,89 @@ public class MinimaxAB {
         run(board.getTurn(), board, Double.POSITIVE_INFINITY);
     }
 
+    public static int minimax(State skynet, Board board, double alpha, double beta, double searchDepth, int
+            currentNode) {
+        MinimaxAB.searchDepth = searchDepth;
+
+        if (currentNode++ == searchDepth || board.isGameOver()) {
+//            int skynetsMove = evalHeuristic(skynet, board, currentNode);
+//            System.out.println(String.format("The AI played move: %d", skynetsMove));
+//            return skynetsMove;
+//            return evalHeuristic(skynet, board, currentNode);
+
+            // FIXME: Remove these test cases
+            if (skynet == State.Blank) {
+                throw new IllegalArgumentException("Player must be X or O.");
+            }
+
+            State opponent = (skynet == State.X) ? State.O : State.X;
+
+            if (board.isGameOver() && board.getWinner() == skynet) {
+                bestPossibleMove = ((10 - currentNode) > bestPossibleMove) ? (bestPossibleMove = (10 - currentNode)) : bestPossibleMove;
+                // TODO: explain this (wins faster)
+                return 10 - currentNode;
+            } else if (board.isGameOver() && board.getWinner() == opponent) {
+                worstPossibleMove = ((-10 + currentNode) < worstPossibleMove) ? (worstPossibleMove = (-10 + currentNode)) : worstPossibleMove;
+                // TODO: explain the minimizer part here, forces min to choose a lower value (more negative)
+                return -10 + currentNode;
+            } else {
+                return 0;
+            }
+        }
+
+        if (board.getTurn() == skynet) {
+//            return getMax(skynet, board, alpha, beta, currentNode);
+            int optimalMove = -1000;
+            for (Integer possibleMove : board.getAvailableMoves()) {
+                statesEvaluated++;
+                Board successorState = board.generateSuccessor();
+                successorState.move(possibleMove);
+                int score = runMinimax(skynet, successorState, alpha, beta, currentNode);
+                if (score > alpha) {
+                    alpha = score;
+                    optimalMove = possibleMove;
+                }
+                if (alpha >= beta) {
+                    nodesPruned++;
+                    break;
+                }
+            }
+            // This condition should never not be met...meaning optimalMove should NEVER be == -1000
+            if (optimalMove != -1000) {
+                // last printout of getMax will be the final decision for move by AI
+//            System.out.println(String.format("\ngetMax optimal move: %d\nnodes pruned thus far: %d", optimalMove + 1, nodesPruned));
+                board.move(optimalMove);
+            }
+            return (int) alpha;
+        } else {
+//            return getMin(skynet, board, alpha, beta, currentNode);
+            int optimalMove = -1000;
+            for (Integer possibleMove : board.getAvailableMoves()) {
+                statesEvaluated++;
+                Board successorState = board.generateSuccessor();
+                successorState.move(possibleMove);
+
+                int score = runMinimax(skynet, successorState, alpha, beta, currentNode);
+
+                if (score < beta) {
+                    beta = score;
+                    optimalMove = possibleMove;
+                }
+                if (alpha >= beta) {
+                    nodesPruned++;
+                    break;
+                }
+            }
+            // This condition should never not be met...meaning optimalMove should NEVER be == -1000
+            if (optimalMove != -1000) {
+//            System.err.println(String.format("\ngetMin optimal move: %d\nnodes pruned thus far: %d", optimalMove, nodesPruned));
+                board.move(optimalMove);
+            }
+            return (int) beta;
+        }
+    }
+
+    //region Old Algorithm
     /**
      * Execute the algorithm.
      *
@@ -31,14 +114,11 @@ public class MinimaxAB {
      * @param searchDepth the maximum depth
      */
     private static void run(State skynet, Board board, double searchDepth) {
-
         if (searchDepth < 1) {
             throw new IllegalArgumentException("Maximum depth must be greater than 0.");
         }
 
         MinimaxAB.searchDepth = searchDepth;
-//        int skynetsMove = runMinimax(skynet, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
-//        System.err.println(String.format("The AI played move: %d", skynetsMove));
         runMinimax(skynet, board, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 0);
     }
 
@@ -81,9 +161,9 @@ public class MinimaxAB {
         int optimalMove = -1000;
 
         for (Integer possibleMove : board.getAvailableMoves()) {
-            // TODO: Rename getDeepCopy() to generateSuccessor()
+            // TODO: Rename generateSuccessor() to generateSuccessor()
             statesEvaluated++;
-            Board successorState = board.getDeepCopy();
+            Board successorState = board.generateSuccessor();
             successorState.move(possibleMove);
             int score = runMinimax(skynet, successorState, alpha, beta, currentNode);
 
@@ -122,7 +202,7 @@ public class MinimaxAB {
 
         for (Integer possibleMove : board.getAvailableMoves()) {
             statesEvaluated++;
-            Board successorState = board.getDeepCopy();
+            Board successorState = board.generateSuccessor();
             successorState.move(possibleMove);
 
             int score = runMinimax(skynet, successorState, alpha, beta, currentNode);
@@ -177,4 +257,5 @@ public class MinimaxAB {
             return 0;
         }
     }
+    //endregion
 }

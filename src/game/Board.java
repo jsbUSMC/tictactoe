@@ -194,7 +194,7 @@ public class Board {
      *
      * @return an identical copy of the board
      */
-    public Board getDeepCopy() {
+    public Board generateSuccessor() {
         Board board = new Board();
 
         for (int i = 0; i < board.getBoard().length; i++) {
