@@ -1,4 +1,6 @@
-package game;
+package ui;
+
+import game.Board;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,7 +68,7 @@ public class GameUI extends JFrame {
         private void registerCustomFont() {
             try {
                 GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-                InputStream inconsolataFont = GamePanel.class.getResourceAsStream("game/Inconsolata.otf");
+                InputStream inconsolataFont = GamePanel.class.getResourceAsStream("ui/Inconsolata.otf");
                 ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, inconsolataFont));
             } catch (FontFormatException | IOException e) {
                 e.printStackTrace();

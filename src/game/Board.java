@@ -65,9 +65,10 @@ public class Board {
      * Places an X or an O on the specified index depending on whose turn it is.
      *
      * @param index the position on the board (example: index 4 is location (0, 1))
-     * @return true if the move has not already been played
      */
     public boolean move(int index) {
+        // the result from this call is the AI's move! refactor it so that instead of this it just sets the static
+        // variable for the AI's move
         return move(index % 3, index / 3);
     }
 
@@ -87,10 +88,11 @@ public class Board {
         if (getBoard()[x][y] == State.Open) {
             getBoard()[x][y] = getPlayersTurn();
         } else {
-            return false;
+            throw new IllegalStateException("This move has already been played!");
         }
 
         setMoveCount(getMoveCount() + 1);
+        // undo the math for converting from a single digit index to a coordinate
         getAvailableMoves().remove((x * 3) + y);
 
         // The game is a draw.
@@ -188,9 +190,9 @@ public class Board {
 
     //region Utility Methods
     /**
-     * Get a deep copy of the Tic Tac Toe board.
+     * Deep clones the Tic Tac Toe board
      *
-     * @return an identical copy of the board
+     * @return a deep copy of the game board
      */
     public Board generateSuccessor() {
         Board board = new Board();

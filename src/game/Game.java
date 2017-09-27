@@ -39,16 +39,15 @@ public class Game {
         promptPlayerMarker();
 
         while (true) {
-            printGameStatus();
+            printGameBoard();
             playMove();
 
             if (board.isGameOver()) {
-                printWinner();
+                printVictor();
 
-//                if (!tryAgain()) {
-//                    break;
-//                }
-                break;
+                if (!promptForPlayAnotherRound()) {
+                    break;
+                }
             }
         }
     }
@@ -76,15 +75,16 @@ public class Game {
             getPlayerMove();
         } else {
             MinimaxAB.computeMinimax(board, 18);
+            System.out.print(MinimaxAB.indexPlayed);
+            System.err.println();
         }
     }
 
     /**
-     * Prints out the board
+     * Prints the game board
      */
-    private void printGameStatus() {
+    private void printGameBoard() {
         System.err.println("\n" + board + "\n");
-//        System.err.println(board.getTurn().name() + "'s turn.");
     }
 
     /**
@@ -110,60 +110,66 @@ public class Game {
     }
 
     /**
+     * Simple print of the summary statistics obtained during the run of the Minimax algorithm.
+     */
+    private void printSummaryStatistics() {
+        System.err.println("\nSummary Statistics from Minimax Algorithm\n=========================================");
+        System.err.println(String.format("Total Nodes Pruned: %d\nTotal States Evaluated: %d",
+                MinimaxAB.nodesPruned, MinimaxAB.statesEvaluated));
+    }
+
+    /**
      * Prints the victor to the console, along with some summary statistics for the game. These summary statistics
      * are pulled from the MinimaxAB class's static int variables `nodesPruned` and `statesEvaluated`, which keep
      * track of how many successor states were generated during the course of the algorithm and also how many times a
      * node was pruned from the tree by the alpha-beta cutoff. This is further explained in the MinimaxAB class.
      */
-    private void printWinner() {
-        State winner = board.getWinner();
+    private void printVictor() {
+        State victor = board.getWinner();
 
         // Print the final state of the board upon victory or draw
         System.err.println("\n" + board + "\n");
 
         // Uses the Open value from the State enum as the victor, otherwise, print the Player that won
-        if (winner == State.Open) {
+        if (victor == State.Open) {
             System.err.println("The TicTacToe is a Draw.");
         } else {
-            System.err.println("Player " + winner.toString() + " wins!");
+            System.err.println("Player " + victor.toString() + " wins!");
         }
-
-        // Simple print of the summary statistics obtained during the run of the Minimax algorithm.
-        System.err.println(String.format("\nTotal Nodes Pruned: %d\nTotal States Evaluated: %d",
-                MinimaxAB.nodesPruned, MinimaxAB.statesEvaluated));
+        printSummaryStatistics();
     }
 
-//    /**
-//     * Reset the game if the player wants to play again.
-//     *
-//     * @return true if the player wants to play again
-//     */
-//    private boolean tryAgain() {
-//        if (promptTryAgain()) {
-//            board.reset();
-//            System.err.println("Started new game.");
-//            System.err.println("X's turn.");
-//            return true;
-//        }
-//
-//        return false;
-//    }
+    /**
+     * Resets all values for the summary statistics and for the algorithm's move. Although by running through the
+     * algorithm, it will already reset to it's best move choice, it is best to also blank it out here just in case
+     * there are problems when printing the move choice to the screen.
+     */
+    private void resetStatistics() {
+        MinimaxAB.indexPlayed = 0;
+        MinimaxAB.nodesPruned = 0;
+        MinimaxAB.statesEvaluated = 0;
+    }
 
-//    /**
-//     * Ask the player if they want to play again.
-//     *
-//     * @return true if the player wants to play again
-//     */
-//    private boolean promptTryAgain() {
-//        while (true) {
-//            System.err.print("Would you like to start a new game? (Y/N): ");
-//            String response = stdIn.next();
-//            if (response.equalsIgnoreCase("y")) {
-//                return true;
-//            } else if (response.equalsIgnoreCase("n")) {
-//                return false;
-//            }
-//            System.err.println("Invalid input.");
-//        }
-//    }
+    /**
+     * Prompts the player to choose whether or not they want to play again. If they do choose to play again, it
+     * resets the game board and will set all Minimax statistics back to nil.
+     *
+     * @return true if the player wants to play again
+     */
+    private boolean promptForPlayAnotherRound() {
+        while (true) {
+            System.err.print("Would you like to start a new game? (Y/N): ");
+            String response = stdIn.next();
+            if (response.equalsIgnoreCase("y")) {
+                board.reset();
+                resetStatistics();
+                System.err.println("Started new game.");
+                System.err.println("X's turn.");
+                return true;
+            } else if (response.equalsIgnoreCase("n")) {
+                return false;
+            }
+            System.err.println("Invalid input.");
+        }
+    }
 }

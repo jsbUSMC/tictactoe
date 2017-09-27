@@ -10,7 +10,7 @@ import java.util.HashSet;
  * @since 9/24/2017
  * Assignment: Project 1 - Tic Tac Toe
  */
-@SuppressWarnings("WeakerAccess, UnusedDeclaration, Duplicates")
+@SuppressWarnings("WeakerAccess, Duplicates")
 public class NineBoard {
     private Board[][] gameGrid;
     private State playersTurn;
@@ -50,53 +50,35 @@ public class NineBoard {
         initialize();
     }
 
-    /*public boolean move(int index) {
-        return move(index % 3, index %3);
-    }*/
+    public boolean move(int board, int index) {
+        int boardX = board / 3;
+        int boardY = board % 3;
+        return move(boardX, boardY, index);
+    }
 
-    /*private boolean move(int x, int y) {
+    private boolean move(int boardX, int boardY, int loc) {
         if (gameOver) {
             throw new IllegalStateException("TicTacToe is over. No moves can be played.");
         }
 
-        if (board[y][x] == State.Open) {
-            board[y][x] = playersTurn;
-        } else {
-            return false;
-        }
+        gameGrid[boardX][boardY].move(loc);
 
         moveCount++;
-        movesAvailable.remove((y * 3) + x);
+        movesAvailable.remove((boardX * 3) + boardY);
 
-        // The game is a draw.
-        if (moveCount == 9) {
-            winner = State.Open;
+        // The game is a win
+        if (gameGrid[boardX][boardY].getWinner() != State.Open) {
+            winner = gameGrid[boardX][boardY].getWinner();
             gameOver = true;
         }
 
-        // Check for a winner.
-        checkRow(y);
-        checkColumn(x);
-        checkDiagonalFromTopLeft(x, y);
-        checkDiagonalFromTopRight(x, y);
-
         playersTurn = (playersTurn == State.X) ? State.O : State.X;
         return true;
-    }*/
-
-    /**
-     * Get a copy of the array that represents the board.
-     *
-     * @return the board array
-     */
-/*
-    State[][] toArray() {
-        return board.clone();
     }
-*/
+
 
     /**
-     * Check to see who's turn it is.
+     * Check to see whose turn it is to play
      *
      * @return the player who's turn it is
      */
@@ -105,7 +87,8 @@ public class NineBoard {
     }
 
     /**
-     * Get the indexes of all the positions on the board that are empty.
+     * Get the indices of all the positions on the board that are empty, for each of the boards
+     * This method is incomplete
      *
      * @return the empty cells
      */
@@ -113,124 +96,23 @@ public class NineBoard {
         return movesAvailable;
     }
 
-    public void move(int board, int index) {
-        // select the board at board index and the loc on board with index
-    }
-
-    /**
-     * Checks the specified row to see if there is a winner.
-     *
-     * @param row the row to check
-     */
-    /*private void checkRow(int row) {
-        for (int i = 1; i < 3; i++) {
-            if (board[row][i] != board[row][i - 1]) {
-                break;
-            }
-            if (i == 2) {
-                winner = playersTurn;
-                gameOver = true;
-            }
-        }
-    }*/
-
-    /**
-     * Checks the specified column to see if there is a winner.
-     *
-     * @param column the column to check
-     */
-    /*private void checkColumn(int column) {
-        for (int i = 1; i < 3; i++) {
-            if (board[i][column] != board[i - 1][column]) {
-                break;
-            }
-            if (i == 2) {
-                winner = playersTurn;
-                gameOver = true;
-            }
-        }
-    }*/
-
-    /**
-     * Check the left diagonal to see if there is a winner.
-     *
-     * @param x the x coordinate of the most recently played move
-     * @param y the y coordinate of the most recently played move
-     */
-    /*private void checkDiagonalFromTopLeft(int x, int y) {
-        if (x == y) {
-            for (int i = 1; i < 3; i++) {
-                if (board[i][i] != board[i - 1][i - 1]) {
-                    break;
-                }
-                if (i == 2) {
-                    winner = playersTurn;
-                    gameOver = true;
-                }
-            }
-        }
-    }*/
-
-    /**
-     * Check the right diagonal to see if there is a winner.
-     *
-     * @param x the x coordinate of the most recently played move
-     * @param y the y coordinate of the most recently played move
-     *//*
-    private void checkDiagonalFromTopRight(int x, int y) {
-        if (2 - x == y) {
-            for (int i = 1; i < 3; i++) {
-                if (board[2 - i][i] != board[3 - i][i - 1]) {
-                    break;
-                }
-                if (i == 2) {
-                    winner = playersTurn;
-                    gameOver = true;
-                }
-            }
-        }
-    }*/
-
-    public NineBoard getDeepCopy() {
+    public NineBoard generateSuccessors() {
         NineBoard grid = new NineBoard();
 
         for (int i = 0; i < grid.getGameGrid().length; i++) {
+            grid.getGameGrid()[i] = this.getGameGrid()[i].clone();
             // do something
         }
+
+        // Set all current game conditions on the generated successor state
+        grid.setPlayersTurn(this.getPlayersTurn());
+        grid.setWinner(this.getWinner());
+        grid.setMovesAvailable(new HashSet<>());
+        grid.getAvailableMoves().addAll(this.getAvailableMoves());
+        grid.setMoveCount(this.getMoveCount());
+        grid.setGameOver(this.isGameOver());
+
         return grid;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        // First row of games
-        // First board row
-        sb.append(this.gameGrid[0][0].getBoard()[0][0].name());
-        sb.append(" ");
-        sb.append(this.gameGrid[0][0].getBoard()[0][1].name());
-        sb.append(" ");
-        sb.append(this.gameGrid[0][0].getBoard()[0][2].name());
-        sb.append(" ");
-        // Dividers
-        sb.append("  ||  ");
-        // Second board row
-        sb.append(this.gameGrid[0][1].getBoard()[0][0].name());
-        sb.append(" ");
-        sb.append(this.gameGrid[0][1].getBoard()[0][1].name());
-        sb.append(" ");
-        sb.append(this.gameGrid[0][1].getBoard()[0][2].name());
-        sb.append(" ");
-        // Dividers
-        sb.append("  ||  ");
-        // Third board row
-        sb.append(this.gameGrid[0][2].getBoard()[0][0].name());
-        sb.append(" ");
-        sb.append(this.gameGrid[0][2].getBoard()[0][1].name());
-        sb.append(" ");
-        sb.append(this.gameGrid[0][2].getBoard()[0][2].name());
-
-        return new String(sb);
     }
 
     //region Mutators and Accessors
@@ -493,9 +375,9 @@ public class NineBoard {
         return new String(sb);
     }
 
+    // Simple tester to make sure the board prints nicely
     public static void main(String[] args) {
         NineBoard game = new NineBoard();
-//        System.out.print(game);
         System.out.print(game.betterPrint());
     }
 }

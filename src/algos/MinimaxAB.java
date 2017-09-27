@@ -7,11 +7,11 @@ import game.State;
  * This class contains all the logic for implementing the Minimax algorithm, with a heuristic evaluation function
  * and alpha-beta pruning.
  */
-@SuppressWarnings("WeakerAccess, Duplicates")
 public class MinimaxAB {
     private static double searchDepth;
     public static int nodesPruned;
     public static int statesEvaluated;
+    public static int indexPlayed;
 
     /**
      * @param board the game board in play
@@ -35,6 +35,7 @@ public class MinimaxAB {
             }
         }
 
+        // plays the MAX node
         if (board.getPlayersTurn() == skynet) {
             int optimalMove = -1000;
             for (Integer possibleMove : board.getAvailableMoves()) {
@@ -53,9 +54,11 @@ public class MinimaxAB {
             }
             // This condition should never not be met...meaning optimalMove should NEVER be == -1000
             if (optimalMove != -1000) {
+                indexPlayed = optimalMove + 1;
                 board.move(optimalMove);
             }
             return (int) alpha;
+            // Plays the MIN node
         } else {
             int optimalMove = -1000;
             for (Integer possibleMove : board.getAvailableMoves()) {
@@ -74,6 +77,7 @@ public class MinimaxAB {
             }
             // This condition should never not be met...meaning optimalMove should NEVER be == -1000
             if (optimalMove != -1000) {
+                indexPlayed = optimalMove + 1;
                 board.move(optimalMove);
             }
             return (int) beta;
